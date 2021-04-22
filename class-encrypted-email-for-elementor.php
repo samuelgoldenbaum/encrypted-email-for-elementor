@@ -20,31 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once 'constants.php';
 
-
-abstract class NoticeType
-{
-    const Error = 'notice-error';
-    const Warning = 'notice-warning';
-    const Success = 'notice-success';
-    const Info = 'notice-info';
-}
-
-final class AdminNotice {
-    private $_message;
-    private $_noticeType;
-
-    function __construct( $message, $noticeType ) {
-        $this->_message = $message;
-        $this->_noticeType = $noticeType;
-
-        add_action( 'admin_notices', array( $this, 'render' ) );
-    }
-
-    function render() {
-        printf( '<div class="notice ' . $this->_noticeType . ' is-dismissible">%s</div>', $this->_message );
-    }
-}
-
 /**
  * Main Encrypted Email For Elementor Class
  *

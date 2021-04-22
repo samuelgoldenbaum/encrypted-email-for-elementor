@@ -160,14 +160,86 @@ class EncryptedEmail extends Widget_Base
             ]
         );
 
+        $this->add_control(
+            'separator_settings',
+            [
+                'type' => Controls_Manager::DIVIDER,
+                'style' => 'thick',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'align',
+            [
+                'label' => __( 'Alignment', ENCRYPTED_EMAIL_FOR_ELEMENTOR_TD ),
+                'type' => Controls_Manager::CHOOSE,
+                'options' => [
+                    'left' => [
+                        'title' => __( 'Left', ENCRYPTED_EMAIL_FOR_ELEMENTOR_TD ),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => __( 'Center', ENCRYPTED_EMAIL_FOR_ELEMENTOR_TD ),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'right' => [
+                        'title' => __( 'Right', ENCRYPTED_EMAIL_FOR_ELEMENTOR_TD ),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                    'justify' => [
+                        'title' => __( 'Justified', ENCRYPTED_EMAIL_FOR_ELEMENTOR_TD ),
+                        'icon' => 'eicon-text-align-justify',
+                    ],
+                ],
+                'default' => '',
+                'selectors' => [
+                    '{{WRAPPER}}' => 'text-align: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'view',
+            [
+                'label' => __( 'View', 'elementor' ),
+                'type' => Controls_Manager::HIDDEN,
+                'default' => 'traditional',
+            ]
+        );
+
         $this->end_controls_section();
 
         // style tab
         $this->start_controls_section(
             'section_style_image',
             [
-                'label' => __('Image', ENCRYPTED_EMAIL_FOR_ELEMENTOR_TD),
+                'label' => __('Link', ENCRYPTED_EMAIL_FOR_ELEMENTOR_TD),
                 'tab' => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'title_color',
+            [
+                'label' => __( 'Text Color', 'elementor' ),
+                'type' => Controls_Manager::COLOR,
+                'global' => [
+                    'default' => Global_Colors::COLOR_PRIMARY,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .encrypted-link' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'typography',
+                'global' => [
+                    'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+                ],
+                'selector' => '{{WRAPPER}} .encrypted-link',
             ]
         );
 
@@ -186,11 +258,20 @@ class EncryptedEmail extends Widget_Base
     protected function render() {
         $settings = $this->get_settings_for_display();
 
-        $link_html = '<a data-target="' . $settings['address'] . '" ';
-        if (isset($settings['title']) && trim($settings['title']) !== '') {
-            $link_html .= ' title="' . $settings['title'] . '"';
-        }
-        $link_html .= '>' . $settings['title'] . '</a>';
+        $this->add_render_attribute(
+            'link',
+            [
+                'class' => 'encrypted-link',
+                'title' => settings['title'],
+                'data-target' => base64_encode('mailto:' . $settings['address']),
+                'href' => '#',
+                'onclick' => 'location.href=atob(this.dataset.target);return false;',
+            ]
+        );
+
+        $this->add_inline_editing_attributes( 'title' );
+
+        $link_html = '<a ' . $this->get_render_attribute_string('link') . '>' . $settings['title'] . '</a>';
 
         echo $link_html;
 
